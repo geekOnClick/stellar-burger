@@ -9,16 +9,20 @@ import {
 } from '@zlden/react-developer-burger-ui-components';
 
 import { TBurgerIngredientUIProps } from './type';
+import { useDispatch } from '../../../services/store';
+import { setSelectItem } from '../../../store/slices/rootSlice';
 
 export const BurgerIngredientUI: FC<TBurgerIngredientUIProps> = memo(
   ({ ingredient, count, handleAdd, locationState }) => {
     const { image, price, name, _id } = ingredient;
+    const dispatch = useDispatch();
 
     return (
       <li className={styles.container}>
         <Link
           className={styles.article}
           to={`/ingredients/${_id}`}
+          onClick={() => dispatch(setSelectItem(ingredient))}
           state={locationState}
         >
           {count && <Counter count={count} />}
