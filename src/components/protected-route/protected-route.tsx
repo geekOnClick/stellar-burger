@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Navigate, useLocation } from 'react-router';
-import { useDispatch, useSelector } from '../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 // import {
 //   isAuthCheckedSelector,
 //   userDataSelector
@@ -10,7 +10,7 @@ import {
   isAuthCheckedSelector,
   loadUser,
   userDataSelector
-} from '../store/slices/rootSlice';
+} from '../../store/slices/rootSlice';
 
 type ProtectedRouteProps = {
   onlyUnAuth?: boolean;

@@ -1,16 +1,32 @@
-import { FC, useMemo } from 'react';
+import { FC, useEffect, useMemo } from 'react';
 import { Preloader } from '../ui/preloader';
 import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient, TOrder } from '@utils-types';
-import { useSelector } from '../../services/store';
+import { useDispatch, useSelector } from '../../services/store';
 import {
+  loadIngridient,
+  loadIngridients,
+  loadOrder,
   selectIngredients,
   selectOrder,
   setSelectedOrder
 } from '../../store/slices/rootSlice';
+import { useParams } from 'react-router-dom';
 
-export const OrderInfo: FC = () => {
+type TOrderDetails = {
+  background?: null | {
+    pathname: string;
+    search: string;
+    hash: string;
+    state: null | string;
+    key: string;
+  };
+};
+
+export const OrderInfo: FC<TOrderDetails> = ({ background }) => {
   const orderData: TOrder = useSelector(selectOrder);
+  const dispatch = useDispatch();
+  const params = useParams();
 
   const data = useSelector(selectIngredients);
   const ingredients: TIngredient[] = [
@@ -18,6 +34,13 @@ export const OrderInfo: FC = () => {
     ...data.mains,
     ...data.sauces
   ];
+
+  useEffect(() => {
+    if (background === null && params.number) {
+      dispatch(loadIngridients());
+      dispatch(loadOrder(Number(params?.number)));
+    }
+  }, []);
 
   /* Готовим данные для отображения */
   const orderInfo = useMemo(() => {

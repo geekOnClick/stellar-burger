@@ -11,9 +11,9 @@ import {
 } from '@pages';
 import '../../index.css';
 
-import { Route, Routes, useNavigate } from 'react-router-dom';
+import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
 import { MainLayout } from '../../layouts';
-import { ProtectedRoute } from '../../utils/ProtectedRoute';
+import { ProtectedRoute } from '../protected-route';
 import { IngredientDetails, Modal, OrderInfo } from '@components';
 import { useDispatch, useSelector } from '../../services/store';
 import {
@@ -22,11 +22,35 @@ import {
   setSelectedOrder,
   setSelectItem
 } from '../../store/slices/rootSlice';
+import { useLocation } from 'react-router';
+import { ItemPageUI } from '../ui/pages/item-page';
 
 const App = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const params = useParams();
   const orderData = useSelector(selectOrder);
+  const background = location.state;
+
+  function extractStringAfterFeed(str: string, category: string) {
+    let regex = /\/feed\/(\d+)/;
+    if (category === 'feed') {
+      regex = /\/feed\/(\d+)/;
+    } else if (category === 'order') {
+      regex = /\/profile\/orders\/(.*)/;
+    }
+    const match = str.match(regex);
+    if (match) {
+      return match[1]; // Возвращаем найденное значение после '/feed/'
+    } else {
+      return null; // Возвращаем null, если совпадений не найдено
+    }
+  }
+
+  const updatedTitleFeed = extractStringAfterFeed(location.pathname, 'feed');
+  const updatedTitleOrder = extractStringAfterFeed(location.pathname, 'order');
+
   return (
     <Routes>
       <Route path='/' element={<MainLayout />}>
@@ -35,29 +59,43 @@ const App = () => {
         <Route
           path='/feed/:number'
           element={
-            <Modal
-              title={orderData?.number === 0 ? '' : `#${orderData?.number}`}
-              onClose={() => {
-                dispatch(setSelectedOrder('close'));
-                navigate('/feed');
-              }}
-            >
-              <OrderInfo />
-            </Modal>
+            background ? (
+              <Modal
+                title={orderData?.number === 0 ? '' : `#${orderData?.number}`}
+                onClose={() => {
+                  dispatch(setSelectedOrder('close'));
+                  navigate('/feed');
+                }}
+              >
+                <OrderInfo />
+              </Modal>
+            ) : (
+              <ItemPageUI
+                title={updatedTitleFeed !== null ? `#${updatedTitleFeed}` : ''}
+              >
+                <OrderInfo background={background} />
+              </ItemPageUI>
+            )
           }
         />
         <Route
           path='/ingredients/:id'
           element={
-            <Modal
-              title={'Детали ингредиента'}
-              onClose={() => {
-                dispatch(setSelectItem(null));
-                navigate('/');
-              }}
-            >
-              <IngredientDetails />
-            </Modal>
+            background ? (
+              <Modal
+                title={'Детали ингредиента'}
+                onClose={() => {
+                  dispatch(setSelectItem(null));
+                  navigate('/');
+                }}
+              >
+                <IngredientDetails />
+              </Modal>
+            ) : (
+              <ItemPageUI title='Детали ингредиента'>
+                <IngredientDetails background={background} />
+              </ItemPageUI>
+            )
           }
         />
         <Route
@@ -111,15 +149,25 @@ const App = () => {
         <Route
           path='/profile/orders/:number'
           element={
-            <Modal
-              title={orderData?.number === 0 ? '' : `#${orderData?.number}`}
-              onClose={() => {
-                dispatch(setSelectedOrder('close'));
-                navigate('/profile/orders');
-              }}
-            >
-              <OrderInfo />
-            </Modal>
+            background ? (
+              <Modal
+                title={orderData?.number === 0 ? '' : `#${orderData?.number}`}
+                onClose={() => {
+                  dispatch(setSelectedOrder('close'));
+                  navigate('/profile/orders');
+                }}
+              >
+                <OrderInfo />
+              </Modal>
+            ) : (
+              <ItemPageUI
+                title={
+                  updatedTitleOrder !== null ? `#${updatedTitleOrder}` : ''
+                }
+              >
+                <OrderInfo background={background} />
+              </ItemPageUI>
+            )
           }
         />
 

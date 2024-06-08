@@ -11,7 +11,8 @@ import {
   updateUserApi
 } from '@api';
 import { TIngredient, TOrder, TUser } from '@utils-types';
-import { RootState } from '../../services/store';
+import store, { RootState } from '../../services/store';
+import { makeStoreItems } from '../../utils/makeStoreItems';
 
 type BurgersState = {
   feedData: TFeedsResponse;
@@ -67,87 +68,42 @@ const initialState: BurgersState = {
 
 export const loadFeedData = createAsyncThunk<TFeedsResponse>(
   'root/feed',
-  async () => {
-    try {
-      return await getFeedsApi();
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  async () => await getFeedsApi()
 );
 export const loadOrders = createAsyncThunk<TOrder[]>(
   'root/orders',
-  async () => {
-    try {
-      return await getOrdersApi();
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  async () => await getOrdersApi()
 );
-
 export const loadIngridients = createAsyncThunk(
   'root/ingredients',
-  async () => {
-    try {
-      return await getIngredientsApi();
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
+  async () => await getIngredientsApi()
+);
+export const loadIngridient = createAsyncThunk(
+  'root/ingredient',
+  async (data: string) => {
+    const items = await getIngredientsApi();
+    return { items, data };
   }
 );
-
 export const makeOrder = createAsyncThunk(
   'root/orders/make',
-  async (data: string[]) => {
-    try {
-      return await orderBurgerApi(data);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  async (data: string[]) => await orderBurgerApi(data)
 );
 export const loadOrder = createAsyncThunk(
   'root/orders/order',
-  async (number: number) => {
-    try {
-      return await getOrderByNumberApi(number);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  async (number: number) => await getOrderByNumberApi(number)
 );
-export const logout = createAsyncThunk('root/logout', async () => {
-  try {
-    return await logoutApi();
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-});
-export const loadUser = createAsyncThunk('root/user', async () => {
-  try {
-    return await getUserApi();
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-});
+export const logout = createAsyncThunk(
+  'root/logout',
+  async () => await logoutApi()
+);
+export const loadUser = createAsyncThunk(
+  'root/user',
+  async () => await getUserApi()
+);
 export const updateUser = createAsyncThunk(
   'root/update-user',
-  async (data: TUser) => {
-    try {
-      return await updateUserApi(data);
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  }
+  async (data: TUser) => await updateUserApi(data)
 );
 
 export const rootSlice = createSlice({
@@ -215,20 +171,7 @@ export const rootSlice = createSlice({
       })
       .addCase(loadIngridients.fulfilled, (state, action) => {
         const ingredients = action.payload;
-        let [buns, mains, sauces]: [
-          TIngredient[],
-          TIngredient[],
-          TIngredient[]
-        ] = [[], [], []];
-        ingredients.map((el) => {
-          if (el.type === 'bun') {
-            buns.push(el);
-          } else if (el.type === 'main') {
-            mains.push(el);
-          } else {
-            sauces.push(el);
-          }
-        });
+        let [buns, mains, sauces] = makeStoreItems(ingredients);
         state.ingredients.buns = buns;
         state.ingredients.sauces = sauces;
         state.ingredients.mains = mains;
@@ -238,6 +181,21 @@ export const rootSlice = createSlice({
         console.log('error', action);
         state.isIngredientsLoading = false;
       });
+    builder
+      .addCase(loadIngridient.fulfilled, (state, action) => {
+        const ingredients = action.payload.items;
+        let [buns, mains, sauces] = makeStoreItems(ingredients);
+        const ingredient = [...buns, ...sauces, ...mains].find(
+          (el) => el._id === action.payload.data
+        );
+        if (ingredient) {
+          state.selectedItem = ingredient;
+        }
+      })
+      .addCase(loadIngridient.rejected, (state, action) => {
+        console.log('error', action);
+      });
+
     builder
       .addCase(makeOrder.fulfilled, (state, action) => {
         state.orderModalData = action.payload.order;
