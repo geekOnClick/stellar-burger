@@ -116,7 +116,10 @@ export const rootSlice = createSlice({
       } else if (action.payload.type === 'reloadIngridients') {
         state.constructorItems.ingredients = action.payload.data.ingredients;
       } else {
-        state.constructorItems.ingredients.push(action.payload);
+        state.constructorItems.ingredients.push({
+          ...action.payload,
+          order: state.constructorItems.ingredients.length + 1
+        });
       }
     },
     setOrderRequest(state, action) {

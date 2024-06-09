@@ -17,9 +17,10 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
 
     const makeNewItem = (type: string) => {
       const arr: TIngredient[] = Array.from(ingredients);
-      const res = arr.filter((el) => el._id !== ingredient._id);
+      const res = arr.filter((el) => el.order !== ingredient.order);
       if (type === 'down') {
         res.splice(index + 1, 0, ingredient);
+
         return res;
       } else if (type === 'up') {
         res.splice(index - 1, 0, ingredient);

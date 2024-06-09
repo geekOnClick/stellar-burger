@@ -4,26 +4,14 @@ import { OrderInfoUI } from '../ui/order-info';
 import { TIngredient, TOrder } from '@utils-types';
 import { useDispatch, useSelector } from '../../services/store';
 import {
-  loadIngridient,
   loadIngridients,
   loadOrder,
   selectIngredients,
-  selectOrder,
-  setSelectedOrder
+  selectOrder
 } from '../../store/slices/rootSlice';
 import { useParams } from 'react-router-dom';
 
-type TOrderDetails = {
-  background?: null | {
-    pathname: string;
-    search: string;
-    hash: string;
-    state: null | string;
-    key: string;
-  };
-};
-
-export const OrderInfo: FC<TOrderDetails> = ({ background }) => {
+export const OrderInfo: FC = () => {
   const orderData: TOrder = useSelector(selectOrder);
   const dispatch = useDispatch();
   const params = useParams();
@@ -36,7 +24,7 @@ export const OrderInfo: FC<TOrderDetails> = ({ background }) => {
   ];
 
   useEffect(() => {
-    if (background === null && params.number) {
+    if (params.number) {
       dispatch(loadIngridients());
       dispatch(loadOrder(Number(params?.number)));
     }

@@ -73,7 +73,7 @@ const App = () => {
               <ItemPageUI
                 title={updatedTitleFeed !== null ? `#${updatedTitleFeed}` : ''}
               >
-                <OrderInfo background={background} />
+                <OrderInfo />
               </ItemPageUI>
             )
           }
@@ -93,7 +93,7 @@ const App = () => {
               </Modal>
             ) : (
               <ItemPageUI title='Детали ингредиента'>
-                <IngredientDetails background={background} />
+                <IngredientDetails />
               </ItemPageUI>
             )
           }
@@ -165,7 +165,7 @@ const App = () => {
                   updatedTitleOrder !== null ? `#${updatedTitleOrder}` : ''
                 }
               >
-                <OrderInfo background={background} />
+                <OrderInfo />
               </ItemPageUI>
             )
           }
