@@ -13,6 +13,7 @@ import {
 import { TIngredient, TOrder, TUser } from '@utils-types';
 import store, { RootState } from '../../services/store';
 import { makeStoreItems } from '../../utils/makeStoreItems';
+import { v4 as uuidv4 } from 'uuid';
 
 type BurgersState = {
   feedData: TFeedsResponse;
@@ -118,10 +119,12 @@ export const rootSlice = createSlice({
       } else {
         state.constructorItems.ingredients.push({
           ...action.payload,
+          _id: uuidv4(),
           order: state.constructorItems.ingredients.length + 1
         });
       }
     },
+
     setOrderRequest(state, action) {
       state.orderRequest = action.payload;
     },
