@@ -8,6 +8,7 @@ import {
 } from '../../store/slices/rootSlice';
 import { useDispatch } from '../../services/store';
 import { TIngredient } from '@utils-types';
+import { v4 as uuidv4 } from 'uuid';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
   ({ ingredient, index, totalItems }) => {
@@ -16,17 +17,22 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
     const ingredients = data.ingredients;
 
     const makeNewItem = (type: string) => {
+      const updatedIngredient = Object.assign({}, ingredient);
+      updatedIngredient._id = uuidv4();
       const arr: TIngredient[] = Array.from(ingredients);
-      const res = arr.filter((el) => el.order !== ingredient.order);
-      if (type === 'down') {
-        res.splice(index + 1, 0, ingredient);
+      arr.splice(index, 1);
 
-        return res;
+      if (type === 'down') {
+        arr.splice(index + 1, 0, updatedIngredient);
+
+        return arr;
       } else if (type === 'up') {
-        res.splice(index - 1, 0, ingredient);
-        return res;
+        arr.splice(index - 1, 0, updatedIngredient);
+
+        return arr;
       }
-      return res;
+
+      return arr;
     };
 
     const handleMoveDown = () => {
