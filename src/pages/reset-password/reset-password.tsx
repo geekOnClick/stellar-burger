@@ -9,9 +9,13 @@ export const ResetPassword: FC = () => {
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
   const [error, setError] = useState<Error | null>(null);
+  const passwordRegex = /^.{6,}$/;
 
   const handleSubmit = (e: SyntheticEvent) => {
     e.preventDefault();
+    if (!passwordRegex.test(password)) {
+      return;
+    }
     setError(null);
     resetPasswordApi({ password, token })
       .then(() => {
