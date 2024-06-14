@@ -2,7 +2,7 @@ import { FC, SyntheticEvent, useState } from 'react';
 import { LoginUI } from '@ui-pages';
 import { getUserApi, loginUserApi } from '@api';
 import { useDispatch } from '../../services/store';
-import { setUser } from '../../store/slices/rootSlice';
+import { setUser } from '../../store/slices/burgerSlice';
 import { useNavigate } from 'react-router-dom';
 import { setCookie } from '../../utils/cookie';
 

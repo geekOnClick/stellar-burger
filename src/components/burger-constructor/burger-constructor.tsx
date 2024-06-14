@@ -12,7 +12,7 @@ import {
   setOrderModalData,
   setOrderRequest,
   userDataSelector
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { Navigate } from 'react-router';
 import { useNavigate } from 'react-router-dom';
 

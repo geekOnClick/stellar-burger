@@ -5,7 +5,7 @@ import {
   loadUser,
   updateUser,
   userDataSelector
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 
 export const Profile: FC = () => {
   const dispatch = useDispatch();

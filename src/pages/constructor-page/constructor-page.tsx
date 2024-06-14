@@ -8,8 +8,9 @@ import { Preloader } from '@ui';
 import { FC, useEffect } from 'react';
 import {
   loadIngridients,
+  selectIngredients,
   selectIsIngredientsLoading
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 
 export const ConstructorPage: FC = () => {
   const isIngredientsLoading = useSelector(selectIsIngredientsLoading);

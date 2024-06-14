@@ -14,14 +14,16 @@ import { TIngredient, TOrder, TUser } from '@utils-types';
 import store, { RootState } from '../../services/store';
 import { makeStoreItems } from '../../utils/makeStoreItems';
 
+export type TIngredientsStore = {
+  buns: TIngredient[];
+  mains: TIngredient[];
+  sauces: TIngredient[];
+};
+
 type BurgersState = {
   feedData: TFeedsResponse;
   orders: TOrder[];
-  ingredients: {
-    buns: TIngredient[];
-    mains: TIngredient[];
-    sauces: TIngredient[];
-  };
+  ingredients: TIngredientsStore;
   orderRequest: boolean;
   orderModalData: TOrder | null;
   constructorItems: any;
@@ -30,9 +32,10 @@ type BurgersState = {
   isAuthChecked: boolean;
   user: TUser | null;
   isIngredientsLoading: boolean;
+  isLoading: boolean;
 };
 
-const initialState: BurgersState = {
+export const initialState: BurgersState = {
   feedData: {
     success: true,
     orders: [],
@@ -63,7 +66,8 @@ const initialState: BurgersState = {
   },
   isAuthChecked: true,
   user: null,
-  isIngredientsLoading: false
+  isIngredientsLoading: false,
+  isLoading: false
 };
 
 export const loadFeedData = createAsyncThunk<TFeedsResponse>(
@@ -106,8 +110,8 @@ export const updateUser = createAsyncThunk(
   async (data: TUser) => await updateUserApi(data)
 );
 
-export const rootSlice = createSlice({
-  name: 'root',
+export const burgerSlice = createSlice({
+  name: 'burger',
   initialState,
   reducers: {
     setConstructorItem(state, action) {
@@ -143,30 +147,43 @@ export const rootSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      .addCase(loadFeedData.pending, (state, action) => {
+        state.isLoading = true;
+      })
       .addCase(loadFeedData.fulfilled, (state, action) => {
         state.feedData = action.payload;
+        state.isLoading = false;
       })
       .addCase(loadFeedData.rejected, (state, action) => {
         console.log('error', action);
+        state.isLoading = false;
         state.feedData = initialState.feedData;
       });
     builder
       .addCase(loadOrders.pending, (state, action) => {
         state.orders = [];
+        state.isLoading = true;
       })
       .addCase(loadOrders.fulfilled, (state, action) => {
         state.orders = action.payload;
+        state.isLoading = false;
       })
       .addCase(loadOrders.rejected, (state, action) => {
         console.log('error', action);
+        state.isLoading = false;
         state.orders = [];
       });
     builder
+      .addCase(loadOrder.pending, (state, action) => {
+        state.isLoading = true;
+      })
       .addCase(loadOrder.fulfilled, (state, action) => {
         state.selectedOrder = action.payload.orders[0];
+        state.isLoading = false;
       })
       .addCase(loadOrder.rejected, (state, action) => {
         console.log('error', action);
+        state.isLoading = false;
         state.selectedOrder = initialState.selectedOrder;
       });
     builder
@@ -232,28 +249,37 @@ export const rootSlice = createSlice({
         state.isAuthChecked = true;
       });
     builder
+      .addCase(updateUser.pending, (state, action) => {
+        state.isAuthChecked = false;
+      })
       .addCase(updateUser.fulfilled, (state, action) => {
         state.user = action.payload.user;
+        state.isAuthChecked = true;
       })
       .addCase(updateUser.rejected, (state, action) => {
         console.log('error', action);
+        state.isAuthChecked = true;
       });
   }
 });
 
-export const selectFeedData = (state: RootState) => state.feedData;
-export const selectOrders = (state: RootState) => state.orders;
-export const selectIngredients = (state: RootState) => state.ingredients;
-export const selectOrderRequest = (state: RootState) => state.orderRequest;
-export const selectOrderModalData = (state: RootState) => state.orderModalData;
+export const selectFeedData = (state: RootState) => state.burger.feedData;
+export const selectOrders = (state: RootState) => state.burger.orders;
+export const selectIngredients = (state: RootState) => state.burger.ingredients;
+export const selectOrderRequest = (state: RootState) =>
+  state.burger.orderRequest;
+export const selectOrderModalData = (state: RootState) =>
+  state.burger.orderModalData;
 export const selectConstructorItems = (state: RootState) =>
-  state.constructorItems;
-export const selectItem = (state: RootState) => state.selectedItem;
-export const selectOrder = (state: RootState) => state.selectedOrder;
-export const userDataSelector = (state: RootState) => state.user;
-export const isAuthCheckedSelector = (state: RootState) => state.isAuthChecked;
+  state.burger.constructorItems;
+export const selectItem = (state: RootState) => state.burger.selectedItem;
+export const selectOrder = (state: RootState) => state.burger.selectedOrder;
+export const userDataSelector = (state: RootState) => state.burger.user;
+export const isAuthCheckedSelector = (state: RootState) =>
+  state.burger.isAuthChecked;
 export const selectIsIngredientsLoading = (state: RootState) =>
-  state.isIngredientsLoading;
+  state.burger.isIngredientsLoading;
+export const selectIsLoading = (state: RootState) => state.burger.isLoading;
 
 export const {
   setConstructorItem,
@@ -262,6 +288,7 @@ export const {
   setSelectItem,
   setUser,
   setSelectedOrder
-} = rootSlice.actions;
+} = burgerSlice.actions;
 
-export default rootSlice.reducer;
+export const burgerActions = burgerSlice.actions;
+export const burgerReducer = burgerSlice.reducer;

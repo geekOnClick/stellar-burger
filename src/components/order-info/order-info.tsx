@@ -7,12 +7,14 @@ import {
   loadIngridients,
   loadOrder,
   selectIngredients,
+  selectIsLoading,
   selectOrder
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { useParams } from 'react-router-dom';
 
 export const OrderInfo: FC = () => {
   const orderData: TOrder = useSelector(selectOrder);
+  const isLoading = useSelector(selectIsLoading);
   const dispatch = useDispatch();
   const params = useParams();
 
@@ -72,7 +74,7 @@ export const OrderInfo: FC = () => {
     };
   }, [orderData, ingredients]);
 
-  if (!orderInfo || orderData.number === 0) {
+  if (!orderInfo || (orderData.number === 0 && isLoading)) {
     return <Preloader />;
   }
 

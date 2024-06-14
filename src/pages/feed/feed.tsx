@@ -6,14 +6,16 @@ import { useDispatch, useSelector } from '../../services/store';
 import {
   loadFeedData,
   selectFeedData,
+  selectIsLoading,
   selectOrders
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { getFeedsApi, TFeedsResponse } from '@api';
 
 export const Feed: FC = () => {
   const dispatch = useDispatch();
 
   const data: TFeedsResponse = useSelector(selectFeedData);
+  const isLoading = useSelector(selectIsLoading);
   const orders = data.orders || [];
   const loadItems = async () => {
     try {
@@ -28,7 +30,7 @@ export const Feed: FC = () => {
     loadItems();
   }, []);
 
-  if (!orders.length) {
+  if (!orders.length && isLoading) {
     return <Preloader />;
   }
 
