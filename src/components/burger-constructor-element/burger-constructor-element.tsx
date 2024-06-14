@@ -5,10 +5,9 @@ import { useSelector } from 'react-redux';
 import {
   selectConstructorItems,
   setConstructorItem
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { useDispatch } from '../../services/store';
-import { TIngredient } from '@utils-types';
-import { v4 as uuidv4 } from 'uuid';
+import { makeNewItem } from '../../utils/makeNewItem';
 
 export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
   ({ ingredient, index, totalItems }) => {
@@ -16,30 +15,14 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
     const data = useSelector(selectConstructorItems);
     const ingredients = data.ingredients;
 
-    const makeNewItem = (type: string) => {
-      const updatedIngredient = Object.assign({}, ingredient);
-      updatedIngredient._id = uuidv4();
-      const arr: TIngredient[] = Array.from(ingredients);
-      arr.splice(index, 1);
-
-      if (type === 'down') {
-        arr.splice(index + 1, 0, updatedIngredient);
-
-        return arr;
-      } else if (type === 'up') {
-        arr.splice(index - 1, 0, updatedIngredient);
-
-        return arr;
-      }
-
-      return arr;
-    };
-
     const handleMoveDown = () => {
       dispatch(
         setConstructorItem({
           type: 'reloadIngridients',
-          data: { ...data, ingredients: makeNewItem('down') }
+          data: {
+            ...data,
+            ingredients: makeNewItem('down', ingredients, ingredient, index)
+          }
         })
       );
     };
@@ -48,7 +31,10 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
       dispatch(
         setConstructorItem({
           type: 'reloadIngridients',
-          data: { ...data, ingredients: makeNewItem('up') }
+          data: {
+            ...data,
+            ingredients: makeNewItem('up', ingredients, ingredient, index)
+          }
         })
       );
     };
@@ -57,7 +43,10 @@ export const BurgerConstructorElement: FC<BurgerConstructorElementProps> = memo(
       dispatch(
         setConstructorItem({
           type: 'reloadIngridients',
-          data: { ...data, ingredients: makeNewItem('delete') }
+          data: {
+            ...data,
+            ingredients: makeNewItem('delete', ingredients, ingredient, index)
+          }
         })
       );
     };

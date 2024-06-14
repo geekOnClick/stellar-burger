@@ -10,7 +10,7 @@ import {
   isAuthCheckedSelector,
   loadUser,
   userDataSelector
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 
 type ProtectedRouteProps = {
   onlyUnAuth?: boolean;

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from '../../services/store';
 import {
   loadIngridients,
   selectIngredients
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { TIngredient } from '@utils-types';
 
 export const OrdersList: FC<OrdersListProps> = memo(({ orders }) => {

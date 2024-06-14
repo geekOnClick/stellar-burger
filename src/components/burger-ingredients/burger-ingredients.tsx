@@ -9,7 +9,7 @@ import {
   loadOrders,
   selectIngredients,
   selectOrders
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 
 export const BurgerIngredients: FC = () => {
   const { buns, mains, sauces } = useSelector(selectIngredients);

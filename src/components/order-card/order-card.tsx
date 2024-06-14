@@ -9,7 +9,7 @@ import {
   loadIngridients,
   loadOrder,
   selectIngredients
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { Preloader } from '@ui';
 
 const maxIngredients = 6;

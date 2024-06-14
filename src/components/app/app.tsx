@@ -12,7 +12,6 @@ import {
 import '../../index.css';
 
 import { Route, Routes, useNavigate, useParams } from 'react-router-dom';
-import { MainLayout } from '../../layouts';
 import { ProtectedRoute } from '../protected-route';
 import { IngredientDetails, Modal, OrderInfo } from '@components';
 import { useDispatch, useSelector } from '../../services/store';
@@ -21,9 +20,10 @@ import {
   selectOrder,
   setSelectedOrder,
   setSelectItem
-} from '../../store/slices/rootSlice';
+} from '../../store/slices/burgerSlice';
 import { useLocation } from 'react-router';
 import { ItemPageUI } from '../ui/pages/item-page';
+import { MainLayout } from '../../layouts';
 
 const App = () => {
   const dispatch = useDispatch();
